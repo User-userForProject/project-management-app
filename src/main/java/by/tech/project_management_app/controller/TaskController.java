@@ -2,8 +2,6 @@ package by.tech.project_management_app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import by.tech.project_management_app.dto.TaskDto;
-import by.tech.project_management_app.entities.SecurityUser;
 import by.tech.project_management_app.entities.Task;
 import by.tech.project_management_app.service.ProjectService;
 import by.tech.project_management_app.service.ServiceException;
@@ -49,7 +46,7 @@ public class TaskController {
 
     @PostMapping()
     public Task createTask(@RequestBody TaskDto taskDto) {
-        int userId = getUserIdFromAuthentication();
+        int userId = AuthenticationUtils.getUserIdFromAuthentication();
         try {
             projectService.checkIfProjectExists(taskDto.getProjectId());
             return taskService.create(taskDto, userId);
@@ -64,7 +61,7 @@ public class TaskController {
 
     @PatchMapping("/{id}")
     public void editTask(@RequestBody TaskDto taskDto, @PathVariable int id) {
-        int userId = getUserIdFromAuthentication();
+        int userId = AuthenticationUtils.getUserIdFromAuthentication();
         try {
             projectService.checkIfProjectExists(taskDto.getProjectId());
             taskService.edit(taskDto, id, userId);
@@ -85,9 +82,4 @@ public class TaskController {
         }
     }
 
-    private int getUserIdFromAuthentication() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
-        return securityUser.getUserId();
-    }
 }
