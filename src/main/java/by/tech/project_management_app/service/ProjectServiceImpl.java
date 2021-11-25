@@ -49,12 +49,8 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Project create(ProjectDto projectDto, int userId) throws ServiceException {
-        boolean isValid;
-        isValid = Validator.validateProjectDto(projectDto);
-        if (!isValid) {
-            throw new ServiceException("Project fields isn't valid");
-        }
+    public Project create(ProjectDto projectDto, int userId) throws ValidationException {
+        Validator.validateProjectDto(projectDto);
         Project project = new Project();
         project.setName(projectDto.getName());
         project.setDescription(projectDto.getDescription());
@@ -65,10 +61,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void edit(ProjectDto projectDto, int id, int userId) throws ServiceException {
+    public void edit(ProjectDto projectDto, int id, int userId) throws ServiceException, ValidationException {
+        Validator.validateProjectDto(projectDto);
         try {
             checkIfProjectExists(id);
-        } catch (ServiceException ex) {
+        } catch (Exception ex) {
             throw new ServiceException("Project is not found");
         }
         Project project = new Project();

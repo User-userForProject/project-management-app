@@ -7,19 +7,20 @@ public class Validator {
     private static final int NAME_LENGTH = 45;
     private static final int DESCRIPTION_LENGTH = 1000;
 
-    public static boolean validateProjectDto(ProjectDto projectDto) {
-        return validateFieldsLength(projectDto.getName(), projectDto.getDescription());
+    public static void validateProjectDto(ProjectDto projectDto) throws ValidationException {
+        validateFieldsLength(projectDto.getName(), projectDto.getDescription());
     }
 
-    public static boolean validateTaskDto(TaskDto taskDto) {
-        return validateFieldsLength(taskDto.getTaskName(), taskDto.getTaskDescription());
+    public static void validateTaskDto(TaskDto taskDto) throws ValidationException {
+        validateFieldsLength(taskDto.getTaskName(), taskDto.getTaskDescription());
     }
 
-    private static boolean validateFieldsLength(String name, String description) {
+    private static void validateFieldsLength(String name, String description) throws ValidationException {
+        if (name == null || description == null) {
+            throw new ValidationException();
+        }
         if (name.length() > NAME_LENGTH || description.length() > DESCRIPTION_LENGTH) {
-            return false;
-        } else {
-            return true;
+            throw new ValidationException();
         }
     }
 }

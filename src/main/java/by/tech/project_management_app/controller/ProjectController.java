@@ -22,6 +22,7 @@ import by.tech.project_management_app.entities.Project;
 import by.tech.project_management_app.entities.SecurityUser;
 import by.tech.project_management_app.service.ProjectService;
 import by.tech.project_management_app.service.ServiceException;
+import by.tech.project_management_app.service.ValidationException;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -56,8 +57,9 @@ public class ProjectController {
         int userId = getUserIdFromAuthentication();
         try {
             return projectService.create(projectDto, userId);
-        } catch (ServiceException ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Project is not created. One or more fileds are invalid", ex);
+        } catch (ValidationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Project is not created. One or more fileds are invalid", ex);
         }
     }
 
@@ -68,6 +70,9 @@ public class ProjectController {
             projectService.edit(projectDto, id, userId);
         } catch (ServiceException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Project with provided id is not found", ex);
+        } catch (ValidationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Project is not edited. One or more fileds are invalid", ex);
         }
     }
 

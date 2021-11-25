@@ -4,9 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import by.tech.project_management_app.dto.TaskDto;
-import by.tech.project_management_app.entities.Project;
 import by.tech.project_management_app.entities.Task;
-import by.tech.project_management_app.repository.ProjectRepository;
 import by.tech.project_management_app.repository.TaskRepository;
 
 @Service
@@ -31,12 +29,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Task create(TaskDto taskDto, int userId) throws ServiceException {
-        boolean isValid;
-        isValid = Validator.validateTaskDto(taskDto);
-        if (!isValid) {
-            throw new ServiceException("Project fields isn't valid");
-        }
+    public Task create(TaskDto taskDto, int userId) throws ValidationException {
+        Validator.validateTaskDto(taskDto);
         Task task = new Task();
         task.setTaskName(taskDto.getTaskName());
         task.setTaskDescription(taskDto.getTaskDescription());
@@ -49,7 +43,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void edit(TaskDto taskDto, int id, int userId) throws ServiceException {
+    public void edit(TaskDto taskDto, int id, int userId) throws ServiceException, ValidationException {
+        Validator.validateTaskDto(taskDto);
         try {
             checkIfTaskExists(id);
         } catch (ServiceException ex) {

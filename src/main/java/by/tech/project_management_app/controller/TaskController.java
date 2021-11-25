@@ -20,6 +20,7 @@ import by.tech.project_management_app.entities.Task;
 import by.tech.project_management_app.service.ProjectService;
 import by.tech.project_management_app.service.ServiceException;
 import by.tech.project_management_app.service.TaskService;
+import by.tech.project_management_app.service.ValidationException;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -54,6 +55,9 @@ public class TaskController {
             return taskService.create(taskDto, userId);
         } catch (ServiceException ex) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Task is not created.", ex);
+        } catch (ValidationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Task is not created. One or more fileds are invalid", ex);
         }
     }
@@ -66,6 +70,9 @@ public class TaskController {
             taskService.edit(taskDto, id, userId);
         } catch (ServiceException ex) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task or project with provided id is not found", ex);
+        } catch (ValidationException ex) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Task is not edited. One or more fileds are invalid", ex);
         }
     }
 
